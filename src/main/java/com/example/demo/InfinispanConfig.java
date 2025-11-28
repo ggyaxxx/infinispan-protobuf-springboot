@@ -58,9 +58,16 @@ public class InfinispanConfig {
 
         RemoteCacheManager manager = new RemoteCacheManager(builder.build());
 
+        // cache interna preinstallata in Data Grid per registrare i file .proot/definizioneschema/errori compilazione (.errors)
         RemoteCache<String, String> meta = manager.getCache("___protobuf_metadata");
-        manager.administration().getOrCreateCache("books", new StringConfiguration(xml));        BookStoreSchema schema = new BookStoreSchemaImpl();
 
+        //crea la cache se non esiste utilizzando la definizione xml della cache
+        manager.administration().getOrCreateCache("books", new StringConfiguration(xml));
+
+        // crea un'istanza dello schema
+        BookStoreSchema schema = new BookStoreSchemaImpl();
+
+        // registra il file .proto nel server
         meta.put(schema.getProtoFileName(), schema.getProtoFile());
 
         String errors = meta.get(".errors");
